@@ -12,6 +12,8 @@ What it currently does:
 Goals:
 
 Iterate through each row in a sheet.
+
 Fill that row with the parsed data. 
+
 Move onto the next sheet until all sheets are filled.
 
