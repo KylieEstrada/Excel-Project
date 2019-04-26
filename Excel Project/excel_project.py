@@ -1,11 +1,11 @@
 # coding=utf-8
-import openpyxl
 import googlemaps
 import json
+import openpyxl
 
-class contactVector():
+class ContactInfo():
     """
-    Creates an object with all data to be put into the place row
+    Creates an object with all the data needed as well as a method to parse through the JSON data
     """
     def __init__(self, form_address=None, street_number=None, street_name=None, county=None, state=None, website=None, phone=None):
         self.form_address = form_address
@@ -24,32 +24,50 @@ class contactVector():
         self.state = place_id_result["result"]["address_components"][4]["short_name"]
         self.website = place_id_result["result"]["website"]
         self.phone = place_id_result["result"]["formatted_phone_number"]
+        
 
-def get_place_name():
+def get_place_name(): # Pulls data from the given spreadsheet if the given cell has a value.
+
     place_column = input('Prompt: ')
     wb = openpyxl.load_workbook("hospital_prospects.xlsx")
     ws = wb.active
     place_name = ws[place_column].value
-    return place_name
 
-def get_place_search(place_name):
+    if place_name == None:
+        exit()
+    else:
+        return place_name
+
+def get_place_search(place_name): # This uses the google maps to perform a search on the cell data
+
     places_search = gmaps.places(
         query = place_name, 
-        type = "hospital")
-    place_id = (places_search["results"][0]["place_id"])
-    place_id_search = gmaps.place(place_id)
-    return place_id_search
+        radius = "3000"
+        )
 
-api_key = 'AIzaSyDDivYJzpW-tpXCbmqgQAxkVQfqXLEsiS0'
+    try:
+        place_id = (places_search["results"][0]["place_id"])
+        place_id_search = gmaps.place(place_id)
+        return place_id_search
+
+    except:
+        print(place_name)
+        print(json.dumps(places_search, indent=4))
+        exit()
+
+api_key = 'YOUR_API_KEY'
 gmaps = googlemaps.Client(api_key)
 
-name = get_place_name()
-place_id_result = get_place_search(name)
-place_data = contactVector()
-place_data.assign_place_data(place_id_result)
-print(place_data.phone)
+def main(): # testing area for now
+    name = get_place_name() 
+    place_id_result = get_place_search(name)
+    place_data = contactInfo()
+    place_data.assign_place_data(place_id_result)
+    print(place_data.street_number + " " + place_data.street_name + " " + place_data.county 
+           + " " + place_data.state + " " + place_data.website + " " + place_data.phone)
 
-
+if __name__ == '__main__':
+        main()
 
 
 
