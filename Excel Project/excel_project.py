@@ -61,7 +61,7 @@ gmaps = googlemaps.Client(api_key)
 def main(): # testing area for now
     name = get_place_name() 
     place_id_result = get_place_search(name)
-    place_data = contactInfo()
+    place_data = ContactInfo()
     place_data.assign_place_data(place_id_result)
     print(place_data.street_number + " " + place_data.street_name + " " + place_data.county 
            + " " + place_data.state + " " + place_data.website + " " + place_data.phone)
